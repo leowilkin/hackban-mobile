@@ -10,10 +10,10 @@ final class BoardModel {
     var error: String?
     var filters = CardFilters()
     var groupByAssignee: Set<String> = []
-    weak var app: AppModel?
+    @ObservationIgnored weak var app: AppModel?
 
-    private var live: Task<Void, Never>?
-    private var reloadTask: Task<Void, Never>?
+    @ObservationIgnored private var live: Task<Void, Never>?
+    @ObservationIgnored private var reloadTask: Task<Void, Never>?
 
     init(account: Account, boardId: String) {
         self.account = account

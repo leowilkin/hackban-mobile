@@ -87,6 +87,17 @@ struct HomeView: View {
                 .padding(.horizontal)
                 .padding(.bottom, 32)
             }
+            .overlay(alignment: .bottomTrailing) {
+                Button { model.quickAdd = .init(target: nil) } label: {
+                    Image(systemName: "plus")
+                        .font(.title2.weight(.semibold))
+                        .foregroundStyle(.white)
+                        .frame(width: 56, height: 56)
+                }
+                .glassCapsule(tint: Palette.brand)
+                .padding(20)
+                .accessibilityLabel("Quick add")
+            }
             .navigationTitle(title)
             .refreshable { await store.load(model.scopedAccounts) }
             .task(id: model.scopedAccounts.map(\.id)) { await store.load(model.scopedAccounts) }
@@ -140,11 +151,6 @@ struct HomeView: View {
             .accessibilityLabel("Create")
             Button { showSettings = true } label: { Image(systemName: "gearshape") }
                 .accessibilityLabel("Settings")
-        }
-        ToolbarItem(placement: .bottomBar) {
-            Button { model.quickAdd = .init(target: nil) } label: {
-                SwiftUI.Label("Quick add", systemImage: "plus.circle.fill")
-            }
         }
     }
 

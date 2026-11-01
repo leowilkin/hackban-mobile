@@ -8,7 +8,7 @@ final class CardDetailModel {
     var card: CardDetail?
     var board: Board?
     var error: String?
-    weak var app: AppModel?
+    @ObservationIgnored weak var app: AppModel?
 
     init(account: Account, cardId: String) {
         self.account = account

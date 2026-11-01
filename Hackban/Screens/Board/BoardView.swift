@@ -56,7 +56,6 @@ private struct BoardContent: View {
         }
         .navigationTitle(model.board?.name ?? "")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.visible, for: .navigationBar)
         .toolbar { toolbar }
         .sheet(item: $openCard, onDismiss: { model.scheduleReload(after: .zero) }) { route in
             CardDetailSheet(route: route)

@@ -16,9 +16,9 @@ struct MyCardsView: View {
                 EmptyState(title: "Nothing assigned to you", systemImage: "checkmark.circle", message: "Cards you're a member of show up here.")
                     .listRowBackground(Color.clear)
             }
-            ForEach(groups(scoped), id: \.0) { title, items in
-                Section(title) {
-                    ForEach(items) { f in row(f) }
+            ForEach(groups(scoped), id: \.0) { group in
+                Section(group.0) {
+                    ForEach(group.1) { f in row(f) }
                 }
             }
         }
