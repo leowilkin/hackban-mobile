@@ -29,15 +29,27 @@ jobs:
         run: |
           UDID=$(xcrun simctl list devices available -j | python3 -c 'import json,sys; d=json.load(sys.stdin)["devices"]; c=[x for k,v in d.items() if "iOS" in k for x in v if x["name"].startswith("iPhone")]; print(c[-1]["udid"])')
           echo "udid=$UDID" >> "$GITHUB_OUTPUT"
-      - name: Build and test
+      - name: Build
+        timeout-minutes: 25
         run: |
           set -o pipefail
-          xcodebuild test \
+          xcodebuild build-for-testing \
             -project Hackban.xcodeproj -scheme Hackban \
             -destination "id=${{ steps.sim.outputs.udid }}" \
+            -derivedDataPath DerivedData \
             CODE_SIGNING_ALLOWED=NO \
-            | tee build.log | grep -E "error:|warning: .*(deprecated|unused)|Test Case|\*\* (BUILD|TEST)" || true
-          grep -q "\*\* TEST SUCCEEDED \*\*" build.log
-      - name: Errors
-        if: failure()
-        run: grep -E "error:" build.log | sort -u | head -200 || true
+            OTHER_SWIFT_FLAGS='$(inherited) -Xfrontend -warn-long-expression-type-checking=400 -Xfrontend -warn-long-function-bodies=600' \
+            > build.log 2>&1 || { grep -E "error:" build.log | sort -u | head -200; tail -40 build.log; exit 1; }
+          grep -E "warning: (expression|instance method|getter|global function|initializer).*took" build.log | sort -u | head -40 || true
+          grep -E "\*\* (BUILD|TEST BUILD)" build.log || true
+      - name: Test
+        timeout-minutes: 15
+        run: |
+          set -o pipefail
+          xcodebuild test-without-building \
+            -project Hackban.xcodeproj -scheme Hackban \
+            -destination "id=${{ steps.sim.outputs.udid }}" \
+            -derivedDataPath DerivedData \
+            CODE_SIGNING_ALLOWED=NO \
+            > test.log 2>&1 || { grep -E "error|failed|Test Case.*failed" test.log | head -100; tail -60 test.log; exit 1; }
+          grep -E "Test Case|Executed|\*\* TEST" test.log | tail -40
