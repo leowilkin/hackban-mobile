@@ -97,7 +97,7 @@ final class BoardModel {
         return cards
     }
 
-    private func updateCardLocal(_ id: String, _ change: (inout BoardCard) -> Void) -> (inout Board) -> Void {
+    private func updateCardLocal(_ id: String, _ change: @escaping (inout BoardCard) -> Void) -> (inout Board) -> Void {
         { b in
             for l in b.lists.indices {
                 if let i = b.lists[l].cards.firstIndex(where: { $0.id == id }) { change(&b.lists[l].cards[i]); return }
