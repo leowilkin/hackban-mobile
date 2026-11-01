@@ -1,0 +1,8 @@
+*.xcodeproj
+xcuserdata/
+DerivedData/
+.build/
+build.log
+.DS_Store
+Hackban/Info.plist
+HackbanWidgets/Info.plist
