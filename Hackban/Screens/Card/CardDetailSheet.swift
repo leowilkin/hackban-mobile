@@ -631,6 +631,9 @@ struct BlockerPicker: View {
     }
 
     private var candidates: [BoardCard] {
-        model.boardCards.filter { $0.id != card.id && !card.blocking.contains(where: { b in b.id == $0.id }) && (query.isEmpty || $0.title.localizedCaseInsensitiveContains(query)) }
+        let blocking = Set(card.blocking.map(\.id))
+        return model.boardCards.filter { c in
+            c.id != card.id && !blocking.contains(c.id) && (query.isEmpty || c.title.localizedCaseInsensitiveContains(query))
+        }
     }
 }
